@@ -101,6 +101,15 @@ func eqFile(x, y *file) []problem {
 	if xErr != nil || yErr != nil {
 		return p
 	}
+
+	if x.assertFunc != nil {
+		r := x.assertFunc(yContent)
+		if r {
+			p = append(p, "content differs from assert function expectation")
+		}
+		return p
+	}
+
 	if x.ignoreCariageReturn || y.ignoreCariageReturn {
 		xContent = removeCarriageReturn(xContent)
 		yContent = removeCarriageReturn(yContent)
@@ -151,6 +160,13 @@ func eqSymlink(x, y *symlink) []problem {
 func eqDirectory(path string, x, y *directory) []failure {
 	p := eqResource(x.resource, y.resource)
 	var f []failure
+    var glob []string
+	if x.glob != "" {
+		glob, err != os.Glob(path)
+		if err != nil {
+			// TODO
+		}
+	}
 
 	for _, name := range sortedKeys(x.items) {
 		if name == anyFile {
